@@ -39,6 +39,8 @@ struct JoinRequest {
     // 32 unicode glyphs is max name size => 4 bytes per glyph in the worst case, +1 for null
     // terminator = 129
     char username[130];
+    // 4 decimal digits + 1 null terminator
+    char discriminator[6];
     // optional 'a_' + md5 hex digest (32 bytes) + null terminator = 35
     char avatar[36];
     // +1 on each because: it's even / I'm paranoid
@@ -153,6 +155,10 @@ static void Discord_UpdateConnection(void)
                     if (userId && username && joinReq) {
                         StringCopy(joinReq->userId, userId);
                         StringCopy(joinReq->username, username);
+                        auto descrim = GetStrMember(user, "discriminator");
+                        if (descrim) {
+                            StringCopy(joinReq->discriminator, descrim);
+                        }
                         if (avatar) {
                             StringCopy(joinReq->avatar, avatar);
                         }
